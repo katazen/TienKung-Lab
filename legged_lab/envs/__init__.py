@@ -42,3 +42,7 @@ task_registry.register(
 task_registry.register(
     "run_with_sensor", TienKungEnv, TienKungRunWithSensorFlatEnvCfg(), TienKungRunWithSensorAgentCfg()
 )
+
+from legged_lab.envs.g1.g1_env import G1Env
+from legged_lab.envs.g1.qie_walk_cfg import G1QieWalkFlatEnvCfg,G1QieWalkAgentCfg
+task_registry.register("g1qie",G1Env, G1QieWalkFlatEnvCfg(),G1QieWalkAgentCfg())

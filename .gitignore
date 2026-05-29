@@ -1,6 +1,8 @@
 *.egg-info
 *.pyc
+__pycache__
 .vscode
+.idea
 outputs
 logs
 run_bash.sh

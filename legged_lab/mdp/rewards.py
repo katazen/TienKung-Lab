@@ -35,7 +35,7 @@ def track_lin_vel_xy_yaw_frame_exp(
     env: BaseEnv | TienKungEnv, std: float, asset_cfg: SceneEntityCfg = SceneEntityCfg("robot")
 ) -> torch.Tensor:
     asset: Articulation = env.scene[asset_cfg.name]
-    vel_yaw = math_utils.quat_rotate_inverse(
+    vel_yaw = math_utils.quat_apply_inverse(
         math_utils.yaw_quat(asset.data.root_quat_w), asset.data.root_lin_vel_w[:, :3]
     )
     lin_vel_error = torch.sum(torch.square(env.command_generator.command[:, :2] - vel_yaw[:, :2]), dim=1)
@@ -59,6 +59,13 @@ def ang_vel_xy_l2(env: BaseEnv | TienKungEnv, asset_cfg: SceneEntityCfg = SceneE
     asset: Articulation = env.scene[asset_cfg.name]
     return torch.sum(torch.square(asset.data.root_ang_vel_b[:, :2]), dim=1)
 
+def ang_vel_x_l2(env: BaseEnv | TienKungEnv, asset_cfg: SceneEntityCfg = SceneEntityCfg("robot")) -> torch.Tensor:
+    asset: Articulation = env.scene[asset_cfg.name]
+    return torch.square(asset.data.root_ang_vel_b[:, 0])
+
+def ang_vel_y_l2(env: BaseEnv | TienKungEnv, asset_cfg: SceneEntityCfg = SceneEntityCfg("robot")) -> torch.Tensor:
+    asset: Articulation = env.scene[asset_cfg.name]
+    return torch.square(asset.data.root_ang_vel_b[:, 1])
 
 def energy(env: BaseEnv | TienKungEnv, asset_cfg: SceneEntityCfg = SceneEntityCfg("robot")) -> torch.Tensor:
     asset: Articulation = env.scene[asset_cfg.name]
@@ -100,7 +107,16 @@ def flat_orientation_l2(
     asset: Articulation = env.scene[asset_cfg.name]
     return torch.sum(torch.square(asset.data.projected_gravity_b[:, :2]), dim=1)
 
-
+def flat_orientation_x(
+    env: BaseEnv | TienKungEnv, asset_cfg: SceneEntityCfg = SceneEntityCfg("robot")
+) -> torch.Tensor:
+    asset: Articulation = env.scene[asset_cfg.name]
+    return torch.square(asset.data.projected_gravity_b[:, 0])
+def flat_orientation_y(
+    env: BaseEnv | TienKungEnv, asset_cfg: SceneEntityCfg = SceneEntityCfg("robot")
+) -> torch.Tensor:
+    asset: Articulation = env.scene[asset_cfg.name]
+    return torch.square(asset.data.projected_gravity_b[:, 1])
 def is_terminated(env: BaseEnv | TienKungEnv) -> torch.Tensor:
     """Penalize terminated episodes that don't correspond to episodic timeouts."""
     return env.reset_buf * ~env.time_out_buf
@@ -157,7 +173,7 @@ def body_orientation_l2(
     env: BaseEnv | TienKungEnv, asset_cfg: SceneEntityCfg = SceneEntityCfg("robot")
 ) -> torch.Tensor:
     asset: Articulation = env.scene[asset_cfg.name]
-    body_orientation = math_utils.quat_rotate_inverse(
+    body_orientation = math_utils.quat_apply_inverse(
         asset.data.body_quat_w[:, asset_cfg.body_ids[0], :], asset.data.GRAVITY_VEC_W
     )
     return torch.sum(torch.square(body_orientation[:, :2]), dim=1)
@@ -193,9 +209,17 @@ def ankle_action(env: TienKungEnv) -> torch.Tensor:
     return torch.sum(torch.abs(env.action[:, env.ankle_joint_ids]), dim=1)
 
 
+def knee_action(env: TienKungEnv) -> torch.Tensor:
+    return torch.sum(torch.abs(env.action[:, [env.left_leg_ids[3], env.right_leg_ids[3]]]), dim=1)
+
+
+def hip_pitch_action(env: TienKungEnv) -> torch.Tensor:
+    return torch.sum(torch.abs(env.action[:, [env.left_leg_ids[0], env.right_leg_ids[0]]]), dim=1)
+
+
 def hip_roll_action(env: TienKungEnv) -> torch.Tensor:
     """Penalize hip roll joint actions."""
-    return torch.sum(torch.abs(env.action[:, [env.left_leg_ids[0], env.right_leg_ids[0]]]), dim=1)
+    return torch.sum(torch.abs(env.action[:, [env.left_leg_ids[1], env.right_leg_ids[1]]]), dim=1)
 
 
 def hip_yaw_action(env: TienKungEnv) -> torch.Tensor:
