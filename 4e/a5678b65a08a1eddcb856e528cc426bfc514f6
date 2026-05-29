@@ -1,0 +1,25 @@
+rsl_rl/rsl_rl/runners/amp_on_policy_runner.py
+  ai_agent 116
+legged_lab/envs/g1/g1_env.py
+  s_624321fd5318df::t_f7fe564155e4d1 50,601-603,620
+rsl_rl/rsl_rl/utils/motion_loader.py
+  s_624321fd5318df::t_f7fe564155e4d1 41,100-109,119-121,262-265,276-280,286
+legged_lab/envs/g1/qie_walk_cfg.py
+  s_624321fd5318df::t_f7fe564155e4d1 155-157,329-331
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.2",
+  "base_commit_sha": "4ea5678b65a08a1eddcb856e528cc426bfc514f6",
+  "prompts": {},
+  "sessions": {
+    "s_624321fd5318df": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f68ff920-2dbb-48f9-8edb-2e2a47f85770",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "woan <377801872@qq.com>"
+    }
+  }
+}
