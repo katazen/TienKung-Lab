@@ -38,6 +38,7 @@ class AMPLoader:
         preload_transitions=False,
         num_preload_transitions=1000000,
         motion_files=glob.glob("datasets/motion_amp_expert/*"),
+        vel_labels=None,
     ):
         """Expert dataset provides AMP observations from Dog mocap dataset.
 
@@ -96,6 +97,16 @@ class AMPLoader:
         self.trajectory_lens = np.array(self.trajectory_lens)
         self.trajectory_num_frames = np.array(self.trajectory_num_frames)
 
+        # Optional per-clip normalized speed labels (v_hat) for the velocity-conditioned
+        # locomotion discriminator. When provided, an extra v_hat column is appended to
+        # every AMP transition; when None, the loader keeps its original observation layout.
+        self.use_vel_cond = vel_labels is not None
+        if self.use_vel_cond:
+            assert len(vel_labels) == len(self.trajectory_idxs), (
+                "vel_labels must have the same length as motion_files"
+            )
+            self.trajectory_vel_labels = torch.tensor(vel_labels, dtype=torch.float32, device=device)
+
         # Preload transitions.
         self.preload_transitions = preload_transitions
         if self.preload_transitions:
@@ -105,6 +116,9 @@ class AMPLoader:
 
             self.preloaded_s = self.get_full_frame_at_time_batch(traj_idxs, times)
             self.preloaded_s_next = self.get_full_frame_at_time_batch(traj_idxs, times + self.time_between_frames)
+            if self.use_vel_cond:
+                idx_t = torch.as_tensor(traj_idxs, device=self.device, dtype=torch.long)
+                self.preloaded_vel = self.trajectory_vel_labels[idx_t].unsqueeze(-1)
             print("Finished preloading")
 
         self.all_trajectories_full = torch.vstack(self.trajectories_full)
@@ -245,6 +259,10 @@ class AMPLoader:
                 idxs = np.random.choice(self.preloaded_s.shape[0], size=mini_batch_size)
                 s = self.preloaded_s[idxs, self.joint_pose_start_idx : self.end_pos_end_idx]
                 s_next = self.preloaded_s_next[idxs, self.joint_pose_start_idx : self.end_pos_end_idx]
+                if self.use_vel_cond:
+                    v = self.preloaded_vel[idxs]
+                    s = torch.cat([s, v], dim=-1)
+                    s_next = torch.cat([s_next, v], dim=-1)
             else:
                 s, s_next = [], []
                 traj_idxs = self.weighted_traj_idx_sample_batch(mini_batch_size)
@@ -255,12 +273,17 @@ class AMPLoader:
 
                 s = torch.vstack(s)
                 s_next = torch.vstack(s_next)
+                if self.use_vel_cond:
+                    idx_t = torch.as_tensor(traj_idxs, device=self.device, dtype=torch.long)
+                    v = self.trajectory_vel_labels[idx_t].unsqueeze(-1)
+                    s = torch.cat([s, v], dim=-1)
+                    s_next = torch.cat([s_next, v], dim=-1)
             yield s, s_next
 
     @property
     def observation_dim(self):
         """Size of AMP observations."""
-        return self.trajectories[0].shape[1]
+        return self.trajectories[0].shape[1] + (1 if self.use_vel_cond else 0)
 
     @property
     def num_motions(self):

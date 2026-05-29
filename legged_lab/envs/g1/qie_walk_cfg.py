@@ -152,6 +152,9 @@ class LiteRewardCfg:
 @configclass
 class G1QieWalkFlatEnvCfg:
     amp_motion_files_display = ["legged_lab/envs/g1/datasets/motion_visualization/g1_23dof_qie_vis.txt"]
+    # Max speed (m/s) used to normalize the commanded velocity into v_hat for the
+    # velocity-conditioned locomotion discriminator. Matches the paper's fast-mode upper bound.
+    amp_vel_max: float = 3.0
     device: str = "cuda:0"
     scene: BaseSceneCfg = BaseSceneCfg(
         max_episode_length_s=20.0,
@@ -323,6 +326,9 @@ class G1QieWalkAgentCfg(RslRlOnPolicyRunnerCfg):
     # amp parameter
     amp_reward_coef = 0.3
     amp_motion_files = ["legged_lab/envs/g1/datasets/motion_amp_expert/g1_23dof_qie_amp.txt"]
+    # Per-clip normalized speed label v_hat for the velocity-conditioned locomotion
+    # discriminator (same length/order as amp_motion_files). walk ~ 0.8 m/s / 3.0 = 0.25.
+    amp_motion_vel_labels = [0.25]
     amp_num_preload_transitions = 200000
     amp_task_reward_lerp = 0.5
     amp_discr_hidden_dims = [1024, 512, 256]

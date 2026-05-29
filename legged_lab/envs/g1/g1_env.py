@@ -47,6 +47,7 @@ class G1Env(VecEnv):
         self.physics_dt = self.cfg.sim.dt
         self.step_dt = self.cfg.sim.decimation * self.cfg.sim.dt
         self.num_envs = self.cfg.scene.num_envs
+        self.amp_vel_max = cfg.amp_vel_max
         self.seed(cfg.scene.seed)
 
         sim_cfg = sim_utils.SimulationCfg(
@@ -597,6 +598,9 @@ class G1Env(VecEnv):
         self.waist_dof_vel = self.robot.data.joint_vel[:, self.waist_ids]
         self.left_arm_dof_vel = self.robot.data.joint_vel[:, self.left_arm_ids]
         self.right_arm_dof_vel = self.robot.data.joint_vel[:, self.right_arm_ids]
+        # Normalized commanded forward speed v_hat, fed as the extra conditioning input
+        # to the velocity-conditioned locomotion discriminator (appended as the last dim).
+        v_hat = torch.clamp(self.command_generator.command[:, 0:1] / self.amp_vel_max, -1.0, 1.0)
         return torch.cat(
             (
                 self.left_leg_dof_pos,
@@ -613,6 +617,7 @@ class G1Env(VecEnv):
                 right_hand_pos,
                 left_foot_pos,
                 right_foot_pos,
+                v_hat,
             ),
             dim=-1,
         )
