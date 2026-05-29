@@ -1,0 +1,31 @@
+rsl_rl/rsl_rl/utils/motion_loader.py
+  s_624321fd5318df::t_7d7a154687e84c 269-270,272-273,275-276,278-279,281-282,284-285
+  s_624321fd5318df::t_e340e4aa5e46ed 27-30
+  s_624321fd5318df::t_148528edb9511b 181,184,190,193
+  s_624321fd5318df::t_b7db6187ab780b 233-234
+  s_624321fd5318df::t_1079c62991ba54 59-70,77,80
+  s_624321fd5318df::t_3bffc509581b87 246-247
+rsl_rl/rsl_rl/utils/motion_loader_for_display.py
+  s_624321fd5318df::t_94fe70545b24f3 27-30
+  s_624321fd5318df::t_672143a49f5bfb 59-68,77,82
+  s_624321fd5318df::t_34576387e91158 184,189,196,199
+  s_624321fd5318df::t_cdbdd9def12d46 238-239
+  s_624321fd5318df::t_df35067111346e 251,253
+  s_624321fd5318df::t_48166c08f0d5c6 276-277,279-280,282-283,285-286
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.2",
+  "base_commit_sha": "934dc78649ee4b731fce963ab65e6c3346ccd2cf",
+  "prompts": {},
+  "sessions": {
+    "s_624321fd5318df": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f68ff920-2dbb-48f9-8edb-2e2a47f85770",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "woan <377801872@qq.com>"
+    }
+  }
+}
