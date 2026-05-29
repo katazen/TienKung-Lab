@@ -1,0 +1,31 @@
+docs/repro_amp_unified.md
+  s_ba4595063b9191::t_4f83fe1d0b59fb 1-69
+.gitignore
+  s_624321fd5318df::t_e041c5b1bd4d16 3,5
+legged_lab/envs/g1/g1_env.py
+  s_624321fd5318df::t_01e040f3376d6b 615
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.2",
+  "base_commit_sha": "697a99c71d8b44ee9220052b69800a1f5824b2b3",
+  "prompts": {},
+  "sessions": {
+    "s_624321fd5318df": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f68ff920-2dbb-48f9-8edb-2e2a47f85770",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "woan <377801872@qq.com>"
+    },
+    "s_ba4595063b9191": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "c5d5a1cf-8176-4d2e-9fdf-374cdd182060",
+        "model": "claude-opus-4-8"
+      },
+      "human_author": "woan <377801872@qq.com>"
+    }
+  }
+}
